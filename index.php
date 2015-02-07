@@ -12,20 +12,15 @@ require_once "../../redcap_connect.php";
 // Bail if we don't have a project ID
 if(empty($project_id)){
   // no idea how you're supposed to do this gracefully in Redcap.
-
 }
 
-// OPTIONAL: Display the project header
+// header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 
-/* get any instrument provided as a URI param*/
+// fetch forms and fields:
 $this_i = $_GET["instrument"];
-
-/* Fetch all other instruments for this project */
 $instruments = REDCap::getInstrumentNames();
-
-/* we really only want text fields */
 if($this_i){
   $fields = REDCap::getFieldNames($this_i);
   foreach ($fields as $i =>$field){
@@ -37,32 +32,22 @@ if($this_i){
   $fields='';
 }
 
-// Your HTML page content goes here
+//START HTML CONTENT 
 ?>
+
 
 <!-- Load the javascript code for this app -->
 <script src="<?php echo APP_PATH_WEBROOT_FULL?>plugins/autocomplete/functions.js" type="text/javascript"> </script> 
 
-<h3 style="color:#800000;">
-  Auto-Complete Fields
-</h3>
+<h3 style="color:#800000;">Auto-Complete Fields</h3>
 
 <div id="results" name="results" style="display:none"> </div>
 
-<div>
-  <h4>Upload a new completion dictionary</h4>
-  <form id="newAutoCompleteDictionary" target="results" enctype="multipart/form-data" method="post" 
-                        action="<?php echo APP_PATH_WEBROOT_FULL;?>plugins/autocomplete/create_dictionary.php"
-                        style="padding:10px 10px 20px 10px;">
-    <p><input type="file" id="dictionary_file" name="dictionary_file"/></p>
-    <input type="submit" value="Upload" />
-  </form>
-  
-</div>
 
+<p>The Auto-complete plugin uses dictionaries of terms which must be available on your Redcap server. If you need to upload a new dictionary, please speak to your Redcap administrator</p>
 
-
-
+<hr/>
+<!-- Create a new Auto-complete Field  -->
 <div>
 <h4>Create a new Autocomplete Field</h4>
 
@@ -105,7 +90,8 @@ if($this_i){
 </form>
 </div>
 
-
+<hr/>
+<!-- Manage Existing Auto-complete fields -->
 <div>
 <h4>Manage Autocomplete Fields</h4>
 
@@ -113,7 +99,9 @@ if($this_i){
 
 </div>
 
-<?php
 
-// OPTIONAL: Display the project footer
+<?php 
+// END HTML CONTENT
+
+// Footer
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';
