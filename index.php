@@ -32,6 +32,27 @@ if($this_i){
   $fields='';
 }
 
+// fetch available dictionary information
+$dict_dir = APP_PATH_DOCROOT.'../plugins/autocomplete/dictionaries';
+$dictionaries = array();
+if  (! file_exists($dict_dir)){
+  echo "<p>No dictionary directory found. Please contact your redcap administrator</p>";
+}else {
+  $handle = opendir($dict_dir);
+  if ($handle){
+    while($file = readdir($handle)){
+      $path = pathinfo($file);
+      if($path['extension'] == 'sqlite'){ //only look at files with the right file extension
+         $dictionaries[$file] = $path['filename'];
+      }
+    }
+    closedir($handle);
+  } else {
+    echo "<p>Couldn't open dictionary directory for reading. Please contact your Redcap administrator</p>";
+  }
+}
+
+
 //START HTML CONTENT 
 ?>
 
@@ -79,6 +100,17 @@ if($this_i){
          echo "<option value=$name>$display_name</option>";
        }
      ?>
+   </select></td>
+   </tr>
+   <tr>
+   <td><label for="ac_dictionary">Auto-completion Dictionary</td>
+   <td><select id="ac_dictionary" name="ac_dictionary">
+   <option value=''>Choose Dictionary...</option>
+   <?php
+     foreach($dictionaries as $file_name => $display_name){
+      echo "<option value=$file_name>$display_name</option>";
+     }
+   ?>
    </select></td>
    </tr>
    <tr><td colspan=2><input type="submit"></td></tr>
