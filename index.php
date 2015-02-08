@@ -18,6 +18,16 @@ if(empty($project_id)){
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 
+
+function register_autocomplete_field($ac_instrument, $ac_field, $ac_dictionary){
+  var_dump($ac_instrument);
+  var_dump($ac_field);
+  var_dump($ac_dictionary);
+}
+
+
+
+
 // fetch forms and fields:
 $this_i = $_GET["instrument"];
 $instruments = REDCap::getInstrumentNames();
@@ -52,6 +62,14 @@ if  (! file_exists($dict_dir)){
   }
 }
 
+// has the form been submitted? If so, process the request
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+  $ac_instrument = $_POST['ac_instrument_name'];
+  $ac_field = $_POST['ac_field_name'];
+  $ac_dictionary = $_POST['ac_dictionary'];
+  register_autocomplete_field($ac_instrument, $ac_field, $ac_dictionary);
+}
+
 
 //START HTML CONTENT 
 ?>
@@ -72,8 +90,8 @@ if  (! file_exists($dict_dir)){
 <div>
 <h4>Create a new Autocomplete Field</h4>
 
-<form id="newAutoCompleteForm" target="results" enctype="multipart/form-data" method="post" 
-                        action="<?php echo APP_PATH_WEBROOT_FULL;?>plugins/autocomplete/create_autocomplete.php"
+<form id="newAutoCompleteForm"  enctype="multipart/form-data" method="post" 
+                        action="<?php echo APP_PATH_WEBROOT_FULL;?>plugins/autocomplete/?pid=<?php echo $project_id ?>&instrument=<?php echo $this_i ?>"
                         style="padding:10px 10px 20px 10px;">
 
    <table>
@@ -96,8 +114,8 @@ if  (! file_exists($dict_dir)){
    <td><select id='ac_field_name' name='ac_field_name'>
      <option value=''>Choose Field...</option>
      <?php
-       foreach($fields as $name => $display_name){
-         echo "<option value=$name>$display_name</option>";
+       foreach($fields as $name){
+         echo "<option value=$name>$name</option>";
        }
      ?>
    </select></td>
@@ -113,7 +131,7 @@ if  (! file_exists($dict_dir)){
    ?>
    </select></td>
    </tr>
-   <tr><td colspan=2><input type="submit"></td></tr>
+   <tr><td colspan=2><input type="submit" value="submit"></td></tr>
    </div>
    </table>
 
