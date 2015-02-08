@@ -19,7 +19,10 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 
 
-function register_autocomplete_field($ac_instrument, $ac_field, $ac_dictionary){
+function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac_dictionary){
+  // make a note in the redcap database that this text field uses this dictionary. 
+  // the hook will then check this database and add in the necessary javascript when the page is loaded. 
+  var_dump($project_id);
   var_dump($ac_instrument);
   var_dump($ac_field);
   var_dump($ac_dictionary);
@@ -67,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
   $ac_instrument = $_POST['ac_instrument_name'];
   $ac_field = $_POST['ac_field_name'];
   $ac_dictionary = $_POST['ac_dictionary'];
-  register_autocomplete_field($ac_instrument, $ac_field, $ac_dictionary);
+  register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac_dictionary);
 }
 
 
