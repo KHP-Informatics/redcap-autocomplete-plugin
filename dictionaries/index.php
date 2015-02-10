@@ -1,7 +1,17 @@
 <?php
 /*
 * A ControlCentre page to allow administrators to manage dictionaries for the auto-complete plugin
+*
 */
+
+/*
+TO DO 
+
+Currently we're writing the dictionary files to the plugin location. There's no real need for them to be online, so it would be nice
+to have a config setting somewhere to specify a non-Webroot location for them. Need to look into Redcap config - can plugins add config terms? 
+
+*/
+
 
 //load up the plugin stuff
 require_once "../../../redcap_connect.php";

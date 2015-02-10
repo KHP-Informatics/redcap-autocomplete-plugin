@@ -20,13 +20,42 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 
 function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac_dictionary){
+  // scope the global database connection
+  global $conn;
+
   // make a note in the redcap database that this text field uses this dictionary. 
   // the hook will then check this database and add in the necessary javascript when the page is loaded. 
+  // We'll use the element_enum field and prefix it with DICT: to indicate that the enum values are available in a separate dictionary
   var_dump($project_id);
   var_dump($ac_instrument);
   var_dump($ac_field);
+  $ac_dictionary = 'DICT:'.$ac_dictionary;
   var_dump($ac_dictionary);
+  
+  
+  // Can't test this on our production redcap. Wait until we have the STRATA server up and running? 
+  if($project_id && $ac_instrument && $ac_field && $ac_dictionary){
+    $stmt = $mysqli->prepare("UPDATE redcap_metadata set element_enum=? where project_id=? and form_name=? and field_name=?");
+    $stmt->bind_param($project_id, $ac_instrument, $ac_field);
+    /*$result = $stmt->execute();
+    if ($result){
+      echo "Autocomplete field successfully registered";
+    }
+    else{
+      "Error registering autocomplete field: $result";
+    }
+   */
+  }  
+
+  //select * from redcap_metadata where project_id=$project_id and form_name=$ac_instrument and field_name=$ac_field;
+ 
+  // do we need to do any checks to ensure the user has permissions on this project / form / field?
+  
+  //update redcap_metadata set element_note="AUTOCOMPLETE:$ac_dictionary" where project_id=$project_id and form_name=$ac_instrument and field_name=$ac_field;
+
+  
 }
+
 
 
 
