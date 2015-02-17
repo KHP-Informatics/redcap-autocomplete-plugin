@@ -1,26 +1,46 @@
-First attempt at a Redcap plugin for auto-completion of text fields
+#First attempt at a Redcap plugin for auto-completion of text fields
 
-Install:
+**THIS PLUGIN HAS NOT BEEN PROPERLY TESTED YET. DO NOT USE IN PRODUCTION**
+
+## Prerequisites
+
+This plugin requires the Dictionaries plugin which can be found here:
+§
+
+##Installation:
 
 Put the functions in the hooks.php file in your hooks file. 
 Put everything else in redcap/plugins/autocomplete
 
 
-As admin:
-Control Centre > Miscellaneous Modules > Custom Application Links
+## Administrator Documentation:
 
-Add a link with an appropriate label (Autocomplete Plugin, or similar) and ensure that the Append project ID to URL box is checked. 
-URL should be something like https://<redcap.host>/plugins/autocomplete
+The hooks will add a link to the bottom of the left hand menu on the control centre page to the 'Auto-Complete Dictionaries' page. 
+On this page, administrators can upload a text file containing terms to be used for auto-completion.
 
-As user:
+The text file should be formatted as a single column of terms to be used for auto-completion. 
 
-In your project, create an instrument with a text box in it. Remember the variable name you gave it.
+On the back-end these files are converted to sqlite databases. 
 
-Click the Autocomplete Plugin (or whatever you called it) link in the Applications menu on the left hand side of the page.
+If you
+If you have a particularly large dictionary which cannot be uploaded via http you can do the conversion yourself and manually transfer the sqlite file onto your redcap server in your dictionaries folder.
+
+The sqlite database should be name <dictionary_name>.sqlite3
+It should contain a single table, called 'dictionary' which should contain a numeric primary key, an indexed text column 'term' and a 
+
+The schema of the database is defined as:
+
+```
+CREATE TABLE dictionary (
+  id INT NOT NULL PRIMARY KEY
+  term TEXT NOT NULL,
+  same_as INT NOT NULL DEFAULT 0);
+
+CREATE INDEX ON dictionary(term);
+```
 
 
-You can either upload a new dictionary file or use an existing one. Dictionary files should be plain text files containing all possible values of the field, one per line.
+## User Documentation
 
-If you have a particularly large dictionary, for which uploading via http would be unfeasible,  you can convert it to a sqlite database and upload it to the dictionaries directory in the plugin. The database file should be called <DictionaryName>.sqlite and should contain a single table called 'dictionary' with a single indexed text column called 'terms'.
 
  
