@@ -17,8 +17,11 @@ if(empty($project_id)){
 // header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
+// Dictionary class
+require_once('../dictionaries/Dictionary.php');
 
 
+/* Function to register a new autocomplete field */
 function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac_dictionary){
   // scope the global database connection
   global $conn;
@@ -26,25 +29,19 @@ function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac
   // make a note in the redcap database that this text field uses this dictionary. 
   // the hook will then check this database and add in the necessary javascript when the page is loaded. 
   // We'll use the element_enum field and prefix it with DICT: to indicate that the enum values are available in a separate dictionary
-  var_dump($project_id);
-  var_dump($ac_instrument);
-  var_dump($ac_field);
   $ac_dictionary = 'DICT:'.$ac_dictionary;
-  var_dump($ac_dictionary);
   
-  
-  // Can't test this on our production redcap. Wait until we have the STRATA server up and running? 
   if($project_id && $ac_instrument && $ac_field && $ac_dictionary){
-    $stmt = $mysqli->prepare("UPDATE redcap_metadata set element_enum=? where project_id=? and form_name=? and field_name=?");
-    $stmt->bind_param($project_id, $ac_instrument, $ac_field);
-    /*$result = $stmt->execute();
+    $stmt = $conn->prepare("UPDATE redcap_metadata set element_enum=? where project_id=? and form_name=? and field_name=?") or trigger_error($conn->error);;
+    $stmt->bind_param('siss', $ac_dictionary, $project_id, $ac_instrument, $ac_field) or trigger_error($stmt->error);
+    $result = $stmt->execute();
     if ($result){
       echo "Autocomplete field successfully registered";
     }
     else{
-      "Error registering autocomplete field: $result";
+      "Error registering autocomplete field: ".$conn->error;
     }
-   */
+   
   }  
 
   //select * from redcap_metadata where project_id=$project_id and form_name=$ac_instrument and field_name=$ac_field;
@@ -60,7 +57,7 @@ function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac
 
 
 
-// fetch forms and fields:
+/* fetch forms and fields */
 $this_i = $_GET["instrument"];
 $instruments = REDCap::getInstrumentNames();
 if($this_i){
@@ -74,8 +71,26 @@ if($this_i){
   $fields='';
 }
 
-// fetch available dictionary information
-$dict_dir = APP_PATH_DOCROOT.'../plugins/autocomplete/dictionaries';
+/* Fetch data_dictionary location */
+$query = "select * from redcap_config where field_name = 'dictionary_directory'";
+$result = mysqli_query($conn, $query);
+if($result->num_rows == 0){
+  // default to the plugin directory
+  $dict_dir = APP_PATH_DOCROOT.'../plugins/dictionaries';
+  $query = "insert into redcap_config (field_name, value) values ('dictionary_directory', '$dict_dir')";
+  $result = mysqli_query($conn, $query);
+} else {
+  $query = 'select value from redcap_config where field_name="dictionary_directory"';
+  $result = mysqli_query($conn, $query);
+  $row = mysqli_fetch_assoc($result);
+  $dict_dir = $row['value'];
+}
+
+
+/* Fetch existing dictionaries */ 
+$dictionaries = array_map(function($a) { return pathinfo($a, PATHINFO_FILENAME); }, glob("$dict_dir/*.sqlite"));
+
+/*
 $dictionaries = array();
 if  (! file_exists($dict_dir)){
   echo "<p>No dictionary directory found. Please contact your redcap administrator</p>";
@@ -93,8 +108,10 @@ if  (! file_exists($dict_dir)){
     echo "<p>Couldn't open dictionary directory for reading. Please contact your Redcap administrator</p>";
   }
 }
+*/
 
-// has the form been submitted? If so, process the request
+
+/* Process submitted request */
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
   $ac_instrument = $_POST['ac_instrument_name'];
   $ac_field = $_POST['ac_field_name'];
@@ -157,8 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
    <td><select id="ac_dictionary" name="ac_dictionary">
    <option value=''>Choose Dictionary...</option>
    <?php
-     foreach($dictionaries as $file_name => $display_name){
-      echo "<option value=$file_name>$display_name</option>";
+     foreach($dictionaries as $name){
+      echo "<option value=$name>$name</option>";
      }
    ?>
    </select></td>
