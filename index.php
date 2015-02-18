@@ -32,7 +32,7 @@ function register_autocomplete_field($project_id, $ac_instrument, $ac_field, $ac
   $ac_dictionary = 'DICT:'.$ac_dictionary;
   
   if($project_id && $ac_instrument && $ac_field && $ac_dictionary){
-    $stmt = $conn->prepare("UPDATE redcap_metadata set element_enum=? where project_id=? and form_name=? and field_name=?") or trigger_error($conn->error);;
+    $stmt = $conn->prepare("UPDATE redcap_metadata set element_enum=? where project_id=? and form_name=? and field_name=?") or trigger_error($conn->error);
     $stmt->bind_param('siss', $ac_dictionary, $project_id, $ac_instrument, $ac_field) or trigger_error($stmt->error);
     $result = $stmt->execute();
     if ($result){
