@@ -9,10 +9,13 @@
 // Call the REDCap Connect file in the main "redcap" directory
 require_once "../../redcap_connect.php";
 
-// Bail if we don't have a project ID
-if(empty($project_id)){
-  // no idea how you're supposed to do this gracefully in Redcap.
-}
+/* Redcap checks? 
+
+Have we a project id? 
+Does user have appropriate permissions to edit the forms on this project?
+Is this project in production (in which case warn? bail?)
+
+*/
 
 // header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
