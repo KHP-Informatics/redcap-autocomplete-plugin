@@ -1,0 +1,27 @@
+<tr>
+  <td>
+    <table style='width:100%;height:100%;max-height:100%;' cellspacing='0' cellpadding='0'>
+      <tr>
+        <td>
+          Medication
+        </td>
+        <td style='width:10px;padding-left:5px;'>
+          <a href='javascript:;' onclick="dataHist('medication',678);return false;">
+            <img src='/redcap_v6.2.0/Resources/images/history.png' 
+                title='View data history' onmouseover='dh1(this)' onmouseout='dh2(this)'>
+          </a>
+          <br>
+          <a href='javascript:;' onclick="dataResPopup('medication',678);return false;">
+            <img id='dc-icon-medication' src='/redcap_v6.2.0/Resources/images/balloon_left_bw2.gif' 
+                title='View comment log' onmouseover='dc1(this)' onmouseout='dc2(this)'>
+          </a>		
+        </td>
+      </tr>
+    </table>
+  </td>
+  <td class='data'>	
+    <input class='x-form-text x-form-field '  type='text' name='medication' value='' 
+           style='max-width:90%;'     tabindex='2'   size='45'>
+      <div class='note'>this is an auto-complete field. start typing and a list of options will appear</div>
+  </td>
+</tr>

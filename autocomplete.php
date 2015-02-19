@@ -114,7 +114,7 @@ function autocomplete($dictionary, $string){
 
 
 $dictionary = $_GET['dictionary'];
-$string = $_GET['string'];
+$string = $_GET['term'];
 
 $json = autocomplete($dictionary, $string);
 echo $json;
